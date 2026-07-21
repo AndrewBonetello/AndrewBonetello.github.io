@@ -1,0 +1,109 @@
+---
+layout: default
+title: Home
+---
+
+<div class="hero">
+  <div class="signal"></div>
+  <div class="case-tag">Case File — Open Investigation</div>
+  <h1>Breaking things, <span class="accent">writing it up.</span></h1>
+  <p class="lede">Austin-based cybersecurity student working toward a pentesting internship. HTB Certified Penetration Testing Specialist. I document every box, every rabbit hole, every fix.</p>
+  <div class="badges">
+    <span class="badge">CPTS Certified</span>
+    <span class="badge">Offshore Pro Lab</span>
+    <span class="badge">Zephyr Pro Lab</span>
+  </div>
+</div>
+
+<section id="labs">
+  <div class="eyebrow">Certifications</div>
+  <h2>Credentials on file</h2>
+  <div class="cert-grid">
+    <div class="cert">
+      <div class="cert-icon">CPTS</div>
+      <h3>HTB CPTS</h3>
+      <p>Certified Penetration Testing Specialist</p>
+    </div>
+    <div class="cert">
+      <div class="cert-icon">···</div>
+      <h3>Next up</h3>
+      <p>Add your next cert here</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Pro Labs</div>
+  <h2>Completed engagements</h2>
+  <div class="lab-grid">
+    <div class="lab">
+      <h3>Offshore</h3>
+      <p>Active Directory lab simulating a real-world corporate network — external perimeter assessment, internal foothold, and multi-host/forest pivoting to expose a money laundering operation.</p>
+    </div>
+    <div class="lab">
+      <h3>Zephyr</h3>
+      <p>Intermediate red team simulation covering a wide range of Active Directory flaws and misconfigurations — child domain trust attacks, relay attacks, and full-chain AD exploitation.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Skills</div>
+  <h2>Core competencies</h2>
+  <div class="skill-groups">
+    <div class="skill-group">
+      <div class="k">Offensive Operations</div>
+      <ul>
+        <li>Active Directory Attacks</li>
+        <li>Web App Pentesting</li>
+        <li>Network Pentesting</li>
+        <li>API Security Testing</li>
+      </ul>
+    </div>
+    <div class="skill-group">
+      <div class="k">Toolkit</div>
+      <ul>
+        <li>Kali Linux</li>
+        <li>Burp Suite</li>
+        <li>BloodHound / Impacket</li>
+        <li>Nmap / NetExec</li>
+      </ul>
+    </div>
+    <div class="skill-group">
+      <div class="k">Dev &amp; Scripting</div>
+      <ul>
+        <li>Python</li>
+        <li>Bash</li>
+        <li>PowerShell</li>
+        <li>SQL</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Latest writeups</div>
+  <h2>Case log</h2>
+  <div class="cards">
+    {% for post in site.posts limit:3 %}
+    <a class="card" href="{{ post.url | relative_url }}">
+      <div class="date">{{ post.date | date: "%b %-d, %Y" }}</div>
+      <h3>{{ post.title }}</h3>
+      <p>{{ post.excerpt | strip_html | truncate: 100 }}</p>
+      {% if post.difficulty %}<span class="diff">{{ post.difficulty }}</span>{% endif %}
+    </a>
+    {% endfor %}
+  </div>
+  <div class="section-foot"><a href="{{ '/writeups.html' | relative_url }}">View all writeups &rarr;</a></div>
+</section>
+
+<section id="contact">
+  <div class="eyebrow">Get in touch</div>
+  <h2>Initiate handshake</h2>
+  <div class="contact-links">
+    <a href="mailto:youremail@example.com">Email</a>
+    <a href="https://github.com/AndrewBonetello">GitHub</a>
+    <a href="https://medium.com/@andrewbonetello00">Medium</a>
+    <a href="https://app.hackthebox.com/">HackTheBox</a>
+  </div>
+</section>
