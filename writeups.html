@@ -1,0 +1,18 @@
+---
+layout: default
+title: Writeups
+---
+
+<section style="padding-top:60px;">
+  <div class="eyebrow">Case log</div>
+  <h2>All writeups</h2>
+  <div class="writeup-list">
+    {% for post in site.posts %}
+    <a class="writeup-row" href="{{ post.url | relative_url }}">
+      <div class="date">{{ post.date | date: "%b %-d, %Y" }}</div>
+      <h3>{{ post.title }}</h3>
+      {% if post.difficulty %}<span class="diff">{{ post.difficulty }}</span>{% endif %}
+    </a>
+    {% endfor %}
+  </div>
+</section>
