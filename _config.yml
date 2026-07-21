@@ -1,0 +1,6 @@
+title: Andrew Bonetello
+description: Cybersecurity student & aspiring penetration tester — Austin, TX
+url: "https://andrewbonetello.github.io"
+
+markdown: kramdown
+permalink: /writeups/:title/
