@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>andrew@kali:~$</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root {
+    --bg: #060b12;
+    --bg-raised: #0a1420;
+    --border: #123049;
+    --border-strong: #1c4463;
+    --cyan: #38bdf8;
+    --cyan-bright: #7dd3fc;
+    --text: #cfe3f2;
+    --text-dim: #5f7d95;
+    --text-faint: #3a5268;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  a { color: var(--cyan); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--cyan-bright); outline-offset: 2px; }
+
+  .wrap { max-width: 780px; margin: 0 auto; padding: 0 20px; }
+
+  /* nav */
+  nav {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0;
+    position: sticky;
+    top: 0;
+    background: rgba(6, 11, 18, 0.92);
+    backdrop-filter: blur(6px);
+    z-index: 10;
+  }
+  nav .wrap { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .brand { color: var(--cyan-bright); font-weight: 700; }
+  .brand span { color: var(--text-dim); font-weight: 400; }
+  .navlinks { display: flex; gap: 22px; flex-wrap: wrap; }
+  .navlinks a { color: var(--text-dim); position: relative; padding-bottom: 2px; text-decoration: none; }
+  .navlinks a::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -2px;
+    height: 1px;
+    background: var(--cyan);
+    transform: scaleX(0);
+    transition: transform 0.15s ease;
+  }
+  .navlinks a:hover { color: var(--cyan-bright); }
+  .navlinks a:hover::after { transform: scaleX(1); }
+
+  /* hero */
+  .hero { padding: 56px 0 20px; }
+  pre.banner {
+    color: var(--cyan);
+    font-size: 11px;
+    line-height: 1.25;
+    margin: 0 0 24px;
+    overflow-x: auto;
+    text-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+  }
+  .prompt-line { color: var(--text-dim); margin: 0 0 4px; }
+  .prompt-line .p { color: #4ade80; }
+  .tagline { color: var(--text); font-size: 15px; margin: 4px 0 28px; }
+  .tagline .cmt { color: var(--text-faint); }
+
+  /* sections */
+  section { padding: 32px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  .cmd { color: var(--text-dim); margin: 0 0 14px; }
+  .cmd .p { color: #4ade80; }
+  .cmd .arg { color: var(--cyan-bright); }
+
+  .about-block {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 18px 20px;
+    color: var(--text);
+  }
+  .about-block p { margin: 0 0 12px; }
+  .about-block p:last-child { margin-bottom: 0; }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .stack span {
+    border: 1px solid var(--border-strong);
+    color: var(--cyan);
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+  }
+
+  ul.list { list-style: none; margin: 0; padding: 0; }
+  ul.list li {
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--border);
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  ul.list li:last-child { border-bottom: none; }
+  ul.list .item-title { color: var(--text); }
+  ul.list .item-title:hover { color: var(--cyan-bright); }
+  ul.list .meta { color: var(--text-faint); font-size: 12px; white-space: nowrap; }
+
+  /* dashboard */
+  .dash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .metric-card {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 12px;
+    text-align: center;
+  }
+  .metric-card .num { font-size: 22px; color: var(--cyan-bright); font-weight: 700; }
+  .metric-card .label { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+
+  .progress-track {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 14%;
+    background: var(--cyan);
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 8px;
+  }
+  .progress-label .pct { color: var(--cyan-bright); }
+
+  /* cert gallery */
+  .cert-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+  }
+  .cert-gallery figure {
+    margin: 0;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .cert-gallery img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .cert-gallery figcaption {
+    padding: 8px 10px;
+    font-size: 11px;
+    color: var(--text-dim);
+    border-top: 1px solid var(--border);
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 18px 0 40px;
+    color: var(--text-faint);
+    font-size: 12px;
+  }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  footer a { color: var(--text-dim); }
+  footer a:hover { color: var(--cyan-bright); }
+
+  ::selection { background: rgba(56, 189, 248, 0.3); }
+
+  @media (max-width: 560px) {
+    pre.banner { font-size: 8px; }
+    .navlinks { gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">andrew<span>@kali:~$</span></div>
+    <div class="navlinks">
+      <a href="#home">home</a>
+      <a href="#dashboard">dashboard</a>
+      <a href="#writeups">writeups</a>
+      <a href="#certs">certs</a>
+      <a href="#about">about</a>
+      <a href="#contact">contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <section class="hero" id="home">
+    <pre class="banner">
+ █████╗ ███╗   ██╗██████╗ ██████╗ ███████╗██╗    ██╗
+██╔══██╗████╗  ██║██╔══██╗██╔══██╗██╔════╝██║    ██║
+███████║██╔██╗ ██║██║  ██║██████╔╝█████╗  ██║ █╗ ██║
+██╔══██║██║╚██╗██║██║  ██║██╔══██╗██╔══╝  ██║███╗██║
+██║  ██║██║ ╚████║██████╔╝██║  ██║███████╗╚███╔███╔╝
+╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚══╝╚══╝
+    </pre>
+    <p class="prompt-line"><span class="p">andrew@kali</span>:~$ whoami</p>
+    <p class="tagline">Cybersecurity student who loves the offensive side of security</p>
+  </section>
+
+  <section id="dashboard">
+    <div class="dash-grid">
+      <div class="metric-card"><div class="num">1</div><div class="label">certs</div></div>
+      <div class="metric-card"><div class="num">2</div><div class="label">pro labs</div></div>
+    </div>
+  </section>
+
+  <section id="about">
+    <p class="cmd"><span class="p">$</span> cat <span class="arg">about.txt</span></p>
+    <div class="about-block">
+      <p>Cybersecurity student who loves the offensive side of security. Currently working toward the HTB CWES certification, and CTF challenges are where I spend most of my free time. Focused on Active Directory internals, web exploitation, and building out a strong offensive skill set.</p>
+    </div>
+  </section>
+
+  <section id="writeups">
+    <p class="cmd"><span class="p">$</span> ls <span class="arg">~/writeups</span> --sort=recent</p>
+    <ul class="list">
+      <li><a class="item-title" href="https://medium.com/@andrewbonetello00" target="_blank" rel="noopener">Add your latest writeup title here</a><span class="meta">draft</span></li>
+      <li><a class="item-title" href="https://medium.com/@andrewbonetello00" target="_blank" rel="noopener">Add your latest writeup title here</a><span class="meta">draft</span></li>
+      <li><a class="item-title" href="https://medium.com/@andrewbonetello00" target="_blank" rel="noopener">Add your latest writeup title here</a><span class="meta">draft</span></li>
+    </ul>
+  </section>
+
+  <section id="certs">
+    <p class="cmd"><span class="p">$</span> cat <span class="arg">certs.json</span></p>
+    <ul class="list">
+      <li><span class="item-title">HTB CPTS — Certified Penetration Testing Specialist</span><span class="meta">earned</span></li>
+      <li><span class="item-title">HTB Pro Lab — Offshore</span><span class="meta">completed</span></li>
+      <li><span class="item-title">HTB Pro Lab — Zephyr</span><span class="meta">completed</span></li>
+      <li><span class="item-title">HTB CWES — Certified Web Exploitation Specialist</span><span class="meta">in progress</span></li>
+    </ul>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>andrew@kali:~$ _</span>
+    <span>
+      <a href="#contact" id="contact">contact</a>
+    </span>
+  </div>
+</footer>
+
+</body>
+</html>
