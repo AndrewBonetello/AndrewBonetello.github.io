@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTB: Timelapse Walkthrough — andrew@kali:~$</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root {
+    --bg: #060b12;
+    --bg-raised: #0a1420;
+    --border: #123049;
+    --border-strong: #1c4463;
+    --cyan: #38bdf8;
+    --cyan-bright: #7dd3fc;
+    --text: #cfe3f2;
+    --text-dim: #5f7d95;
+    --text-faint: #3a5268;
+    --green: #4ade80;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  a { color: var(--cyan); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .wrap { max-width: 780px; margin: 0 auto; padding: 0 20px; }
+
+  nav {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0;
+    position: sticky;
+    top: 0;
+    background: rgba(6, 11, 18, 0.92);
+    backdrop-filter: blur(6px);
+    z-index: 10;
+  }
+  nav .wrap { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .brand { color: var(--cyan-bright); font-weight: 700; }
+  .brand span { color: var(--text-dim); font-weight: 400; }
+  .navlinks { display: flex; gap: 22px; flex-wrap: wrap; }
+  .navlinks a { color: var(--text-dim); text-decoration: none; }
+  .navlinks a:hover { color: var(--cyan-bright); }
+
+  .writeup-header {
+    padding: 48px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+  .writeup-header .box-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 16px;
+  }
+  .writeup-header .box-info img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.2));
+  }
+  .writeup-header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: var(--cyan-bright);
+  }
+  .writeup-header .meta {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+  .writeup-header .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .writeup-header .tags span {
+    border: 1px solid var(--border-strong);
+    color: var(--cyan);
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+
+  .writeup-body h2 {
+    color: var(--cyan-bright);
+    font-size: 17px;
+    margin: 36px 0 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .writeup-body p { margin: 0 0 14px; }
+  .writeup-body code {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 13px;
+    color: var(--cyan);
+  }
+  .writeup-body pre {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    margin: 0 0 14px;
+    font-size: 13px;
+    color: var(--green);
+  }
+  .writeup-body pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+  }
+  .writeup-body ul, .writeup-body ol {
+    padding-left: 24px;
+    margin: 0 0 14px;
+  }
+  .writeup-body li { margin-bottom: 6px; }
+  .writeup-body img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin: 14px 0;
+  }
+  .writeup-body blockquote {
+    border-left: 3px solid var(--cyan);
+    margin: 0 0 14px;
+    padding: 8px 16px;
+    color: var(--text-dim);
+    background: var(--bg-raised);
+    border-radius: 0 4px 4px 0;
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 18px 0 40px;
+    color: var(--text-faint);
+    font-size: 12px;
+    margin-top: 48px;
+  }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  footer a { color: var(--text-dim); }
+  footer a:hover { color: var(--cyan-bright); }
+
+  ::selection { background: rgba(56, 189, 248, 0.3); }
+
+  @media (max-width: 560px) {
+    .writeup-header .box-info img { width: 60px; height: 60px; }
+    .writeup-header h1 { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="../index.html" class="brand">andrew<span>@kali:~$</span></a>
+    <div class="navlinks">
+      <a href="../index.html#home">home</a>
+      <a href="../index.html#dashboard">dashboard</a>
+      <a href="../index.html#writeups">writeups</a>
+      <a href="../index.html#certs">certs</a>
+      <a href="../index.html#about">about</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <div class="writeup-header">
+    <div class="box-info">
+      <img src="../assets/box-timelapse.png" alt="HTB Timelapse box avatar">
+      <div>
+        <h1>HTB: Timelapse Walkthrough</h1>
+        <div class="meta">Easy · Windows · Active Directory · Oct 24, 2025 · 5 min read</div>
+      </div>
+    </div>
+    <div class="tags">
+      <span>hackthebox</span>
+      <span>active-directory</span>
+      <span>smb</span>
+      <span>laps</span>
+      <span>pfx-cracking</span>
+    </div>
+  </div>
+
+  <div class="writeup-body">
+
+    <p>Timelapse is an easy level active directory box. This box was a two-stage attack. Initial access came from an open SMB share containing a password-protected zip file. Inside that zip was a password-protected PFX certificate. After cracking both with John the Ripper, I used the certificate with evil-winrm to get a user shell.</p>
+
+    <p>The privilege escalation was a LAPS misconfiguration. I found credentials for a service account in the PowerShell history, which was part of the Laps_Readers group. This allowed me read the password for the admin account.</p>
+
+    <h2>Recon</h2>
+
+    <!-- SCREENSHOT: nmap scan -->
+    <img src="../assets/writeups/timelapse-01-nmap.png" alt="Nmap scan results for Timelapse">
+
+    <pre><code>sudo nmap -sVC -p- -v -T5 &lt;ip&gt;</code></pre>
+
+    <p>I added timelapse.htb to my /etc/hosts file</p>
+
+    <p>I then wanted to check port 445 (smb) to see if I can see shares with null authentication.</p>
+
+    <h2>User Flag</h2>
+
+    <pre><code>nxc smb &lt;ip&gt; -u '' -p '' --shares</code></pre>
+
+    <!-- SCREENSHOT: null auth SMB -->
+    <img src="../assets/writeups/timelapse-02-smb-null.png" alt="SMB null authentication attempt">
+
+    <p>After that, I tried Guest authentication with no password and was able to view the shares.</p>
+
+    <pre><code>nxc smb &lt;ip&gt; -u 'guest' -p '' --shares</code></pre>
+
+    <!-- SCREENSHOT: guest auth SMB -->
+    <img src="../assets/writeups/timelapse-03-smb-guest.png" alt="SMB guest authentication showing shares">
+
+    <p>From there, I went to the 'shares' share and found a Dev directory with a backup zip file.</p>
+
+    <pre><code>smbclient //&lt;ip&gt;/Shares -U 'Guest'</code></pre>
+
+    <!-- SCREENSHOT: smbclient -->
+    <img src="../assets/writeups/timelapse-04-smbclient.png" alt="SMB client showing Dev directory and zip file">
+
+    <p>I downloaded the zip file to my machine and tried to unzip the file but it was prompting a password. So I used Zip2john to extract the hash from the zip file and then cracked it with John the ripper.</p>
+
+    <pre><code>zip2john winrm_backup.zip > zip_hash.txt
+john --wordlist=/usr/share/wordlists/rockyou.txt zip_hash.txt</code></pre>
+
+    <!-- SCREENSHOT: zip cracking -->
+    <img src="../assets/writeups/timelapse-05-zip-crack.png" alt="Cracking zip password with John">
+
+    <p>This revealed that the password was <code>supremelegacy</code></p>
+
+    <p>I used that password to unzip the file. Following that I wanted to see the information that the pfx file contained but was prompted a password. Before we go further — a PFX file is a single, password-protected file that bundles a user's public certificate (their "public ID") and their private key (their "secret") together. We need to crack its password so we can extract both parts to authenticate.</p>
+
+    <!-- SCREENSHOT: pfx password prompt -->
+    <img src="../assets/writeups/timelapse-06-pfx-prompt.png" alt="PFX file prompting for password">
+
+    <p>I extracted the password hash for the pfx file using pfx2john.</p>
+
+    <pre><code>pfx2john legacyy_dev_auth.pfx > pfx_hash.txt</code></pre>
+
+    <!-- SCREENSHOT: pfx2john -->
+    <img src="../assets/writeups/timelapse-07-pfx2john.png" alt="Extracting PFX hash with pfx2john">
+
+    <p>After extracting the hash and putting it into a file, I used John the ripper again to crack the hash.</p>
+
+    <!-- SCREENSHOT: John cracking PFX -->
+    <img src="../assets/writeups/timelapse-08-pfx-crack.png" alt="Cracking PFX password with John">
+
+    <p>Doing this revealed the password <code>thuglegacy</code></p>
+
+    <p>After getting the password to the pfx file I needed to extract the public certificate and private key.</p>
+
+    <pre><code>openssl pkcs12 -in legacyy_dev_auth.pfx -clcerts -nokeys -out public.cer
+openssl pkcs12 -in legacyy_dev_auth.pfx -nodes -nocerts -out private_decrypted.key</code></pre>
+
+    <!-- SCREENSHOT: openssl extraction -->
+    <img src="../assets/writeups/timelapse-09-openssl.png" alt="Extracting certificate and key with openssl">
+
+    <p>If you go back to the nmap scan you will notice that port 5986 is open meaning that we can connect to evil-winrm</p>
+
+    <!-- SCREENSHOT: port 5986 -->
+    <img src="../assets/writeups/timelapse-10-port5986.png" alt="Port 5986 open in nmap scan">
+
+    <p>I used this command to connect to evil-winrm and get the user flag.</p>
+
+    <pre><code>evil-winrm -i &lt;ip&gt; -c public.cer -k private_decrypted.key -S</code></pre>
+
+    <!-- SCREENSHOT: user flag -->
+    <img src="../assets/writeups/timelapse-11-user-flag.png" alt="Evil-WinRM shell and user.txt flag">
+
+    <h2>Root Flag</h2>
+
+    <p>I first searched legacyy's privileges and couldn't find anything interesting so therefore I pivoted to see if they left any important notes or if there was anything in the powershell history and sure enough I found a password for the svc_deploy account in the powershell history.</p>
+
+    <pre><code>Get-Content $env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt</code></pre>
+
+    <!-- SCREENSHOT: PowerShell history -->
+    <img src="../assets/writeups/timelapse-12-ps-history.png" alt="PowerShell history revealing svc_deploy credentials">
+
+    <p>After logging into the svc_deploy account my first enumeration step was to check my group memberships with <code>whoami /all</code>. One group immediately stood out to me: <strong>TIMELAPSE\Laps_Readers</strong></p>
+
+    <!-- SCREENSHOT: whoami /all -->
+    <img src="../assets/writeups/timelapse-13-whoami.png" alt="whoami showing Laps_Readers group membership">
+
+    <p><strong>LAPS (Local Administrator Password Solution)</strong> is a tool that randomizes the local admin password on every computer and stores it in Active Directory (AD). The <strong>Laps_Readers</strong> group is given permission to read these passwords. The critical misconfiguration here was that this group could read the LAPS password for the Domain Controller, allowing my svc_deploy user to ask AD for the DC's administrator password.</p>
+
+    <p>I then ran this command to get the password for the administrator.</p>
+
+    <pre><code>Get-ADComputer -Identity DC01 -Properties ms-Mcs-AdmPwd | Select-Object Name, ms-Mcs-AdmPwd</code></pre>
+
+    <!-- SCREENSHOT: LAPS password dump -->
+    <img src="../assets/writeups/timelapse-14-laps-dump.png" alt="Reading LAPS password from Active Directory">
+
+    <p>This is the command that queries Active Directory to steal the LAPS password:</p>
+
+    <ul>
+      <li><code>Get-ADComputer</code>: A cmdlet from the Active Directory module that retrieves AD computer objects.</li>
+      <li><code>-Identity DC01</code>: Specifies which computer object you want to look at.</li>
+      <li><code>-Properties ms-Mcs-AdmPwd</code>: Specifically requests the LAPS password attribute.</li>
+      <li><code>Select-Object Name, ms-Mcs-AdmPwd</code>: Cleans up the output to show only the computer name and the LAPS password.</li>
+    </ul>
+
+    <p>The results showed the password, and with it I logged in to the administrator's account and was able to find the root flag in the user 'trx' desktop.</p>
+
+    <!-- SCREENSHOT: root flag -->
+    <img src="../assets/writeups/timelapse-15-root-flag.png" alt="Administrator shell and root.txt flag">
+
+    <!-- SCREENSHOT: final proof (if you have a second screenshot) -->
+    <img src="../assets/writeups/timelapse-16-pwned.png" alt="Box pwned">
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>andrew@kali:~$ _</span>
+    <span><a href="../index.html#writeups">← back to writeups</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
