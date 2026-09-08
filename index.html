@@ -163,6 +163,55 @@
   }
   .progress-label .pct { color: var(--cyan-bright); }
 
+  /* writeup cards */
+  .writeup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .writeup-card {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 18px;
+  }
+  .writeup-card:hover {
+    border-color: var(--cyan);
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.12);
+    text-decoration: none;
+  }
+  .writeup-card img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 14px;
+    filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.15));
+  }
+  .writeup-card .box-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--cyan-bright);
+    margin-bottom: 4px;
+  }
+  .writeup-card .box-diff {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .writeup-card .box-desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: center;
+    line-height: 1.5;
+  }
+
   /* cert gallery */
   .cert-gallery {
     display: grid;
@@ -244,7 +293,6 @@
       <a href="#writeups">writeups</a>
       <a href="#certs">certs</a>
       <a href="#about">about</a>
-      <a href="#contact">contact</a>
     </div>
   </div>
 </nav>
@@ -280,11 +328,20 @@
 
   <section id="writeups">
     <p class="cmd"><span class="p">$</span> ls <span class="arg">~/writeups</span> --sort=recent</p>
-    <ul class="list">
-      <li><a class="item-title" href="https://medium.com/@andrewbonetello00" target="_blank" rel="noopener">Add your latest writeup title here</a><span class="meta">draft</span></li>
-      <li><a class="item-title" href="https://medium.com/@andrewbonetello00" target="_blank" rel="noopener">Add your latest writeup title here</a><span class="meta">draft</span></li>
-      <li><a class="item-title" href="https://medium.com/@andrewbonetello00" target="_blank" rel="noopener">Add your latest writeup title here</a><span class="meta">draft</span></li>
-    </ul>
+    <div class="writeup-grid">
+      <a class="writeup-card" href="writeups/administrator.html">
+        <img src="assets/box-administrator.png" alt="HTB Administrator box avatar">
+        <div class="box-name">Administrator</div>
+        <div class="box-diff">Medium · Windows · Active Directory</div>
+        <div class="box-desc">Full domain compromise via ACL abuse, Kerberoasting &amp; DCSync</div>
+      </a>
+      <a class="writeup-card" href="writeups/timelapse.html">
+        <img src="assets/box-timelapse.png" alt="HTB Timelapse box avatar">
+        <div class="box-name">Timelapse</div>
+        <div class="box-diff">Easy · Windows · Active Directory</div>
+        <div class="box-desc">SMB share to PFX cracking, WinRM access &amp; LAPS abuse</div>
+      </a>
+    </div>
   </section>
 
   <section id="certs">
@@ -321,7 +378,7 @@
   <div class="wrap">
     <span>andrew@kali:~$ _</span>
     <span>
-      <a href="#contact" id="contact">contact</a>
+      <a href="https://medium.com/@AndrewBonetello" target="_blank" rel="noopener">medium</a>
     </span>
   </div>
 </footer>
